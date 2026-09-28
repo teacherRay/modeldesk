@@ -57,11 +57,27 @@ Developed and published by **Southern Apps**.
   - **Server Tab Dashboard**: 4 rich tiles displaying CPU, RAM, GPU, and VRAM with Catppuccin theme color thresholds.
   - **Persistent Bottom Status Bar**: Unobtrusive 32px telemetry strip anchored across all tabs with live pulsing heartbeat indicator.
 
-### 5. Roadmap & Planned Capabilities
+### 5. Model Profiles & Model Library
+- **Model Profiles System**:
+  - Save, edit, duplicate, and delete fine-tuned inference parameter presets capturing GPU layers (`-ngl`), context window (`-c`), CPU threads (`-t`), Flash Attention (`-fa`), KV cache quantization (`-ctk`, `-ctv`), and parallel slots (`-np`).
+  - Stored locally as structured JSON in `%APPDATA%\LlamaLauncher\profiles\<id>.json`.
+  - Built-in starter profiles: *Max GPU Offload (99 Layers)*, *Large Context 32K (KV Quantized)*, and *CPU Fallback (Low VRAM)*.
+  - 1-click **Apply to Server** and **Apply & Start** controls.
+  - Instant Profile Quick-Selector dropdown integrated directly into the Server Tab.
+- **Interactive Model Library Tab**:
+  - Full-screen catalog of all local GGUF models.
+  - Automatic metadata extraction: Architecture family tags (Gemma, Qwen, DeepSeek, Llama, Mistral, Phi, etc.), Quantization tags (`Q4_K_M`, `Q8_0`), and parameter sizes.
+  - Multimodal vision projector pairing status badge (`Vision Paired`).
+  - Active model indicator badge (`ACTIVE IN SERVER`).
+  - Real-time search/filter bar by model name, architecture, or quantization.
+  - Quick action buttons on each model card: **Load in Server**, **Save Profile**, **Show in Explorer**, and **Copy Path**.
+  - Dynamic folder search management with chips for each scanned folder and custom directory removal.
+
+### 6. Roadmap & Planned Capabilities
 - **Phase 1 (Complete)**: Native Flutter desktop app, token streaming, JSON persistence, conversation history.
 - **Phase 2 (Complete)**: Full interactive server parameters grid, model auto-discovery, mmproj pairing, native file/folder pickers.
 - **Phase 3 (Complete)**: Real-time hardware telemetry dashboard (CPU %, system RAM, DirectX DXGI dedicated VRAM, and AMD ADL die temperatures and board power).
-- **Phase 4**: Saved Model Profiles (e.g. *Gemma 4 Vision*, *Qwen Coder*, *Large Context 32K*) with automatic profile restoration for known models.
+- **Phase 4 (Complete)**: Saved Model Profiles (e.g. *Gemma 4 Vision*, *Qwen Coder*, *Large Context 32K*), Model Library catalog, and auto-profile association.
 - **Phase 5**: UI polish, custom themes, and MSIX packaging for Microsoft Store distribution.
 
 ---
@@ -78,8 +94,8 @@ ModelDesk is built strictly around the **local inference philosophy**:
 
 ## 🚀 Current Status
 
-- **Status**: **Phase 3 Complete (Hardware Telemetry)**
-- **Milestone**: `v0.3.0-telemetry`
+- **Status**: **Phase 4 Complete (Model Profiles & Library)**
+- **Milestone**: `v0.4.0-profiles`
 - **Supported Platforms**: Windows 10 / 11 (64-bit)
 
 ---

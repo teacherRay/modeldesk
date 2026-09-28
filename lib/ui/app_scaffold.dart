@@ -4,21 +4,26 @@ import '../core/theme.dart';
 import '../controllers/chat_controller.dart';
 import '../controllers/server_controller.dart';
 import '../controllers/hardware_controller.dart';
+import '../controllers/profile_controller.dart';
 import 'widgets/status_badge.dart';
 import 'widgets/hardware_status_bar.dart';
 import 'tabs/chat_tab.dart';
 import 'tabs/server_tab.dart';
+import 'tabs/models_tab.dart';
+import 'tabs/profiles_tab.dart';
 
 class AppScaffold extends StatefulWidget {
   final ChatController chatController;
   final ServerController serverController;
   final HardwareController hardwareController;
+  final ProfileController profileController;
 
   const AppScaffold({
     super.key,
     required this.chatController,
     required this.serverController,
     required this.hardwareController,
+    required this.profileController,
   });
 
   @override
@@ -184,20 +189,21 @@ class _AppScaffoldState extends State<AppScaffold> with SingleTickerProviderStat
                 ServerTab(
                   serverController: widget.serverController,
                   hardwareController: widget.hardwareController,
+                  profileController: widget.profileController,
                 ),
 
-                // 3. Models Tab (Phase 4 placeholder)
-                _buildPlaceholderTab(
-                  icon: Icons.inventory_2_outlined,
-                  title: 'Model Library',
-                  subtitle: 'Folder scanner and model management will be migrated in Phase 4.',
+                // 3. Models Library Tab
+                ModelsTab(
+                  serverController: widget.serverController,
+                  profileController: widget.profileController,
+                  onNavigateToTab: (index) => _tabController.animateTo(index),
                 ),
 
-                // 4. Profiles Tab (Phase 4 placeholder)
-                _buildPlaceholderTab(
-                  icon: Icons.tune,
-                  title: 'Model Profiles',
-                  subtitle: 'Saved parameter profiles will be migrated in Phase 4.',
+                // 4. Profiles Management Tab
+                ProfilesTab(
+                  serverController: widget.serverController,
+                  profileController: widget.profileController,
+                  onNavigateToTab: (index) => _tabController.animateTo(index),
                 ),
 
                 // 5. Settings Tab (Phase 5 placeholder)

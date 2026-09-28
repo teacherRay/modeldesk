@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0-profiles] - 2026-09-29
+
+### Added
+- **Model Profiles Architecture**:
+  - Fine-tuned inference parameter presets capturing GPU layers (`-ngl`), context window (`-c`), CPU threads (`-t`), Flash Attention (`-fa`), KV cache quantization (`-ctk`, `-ctv`), parallel slots (`-np`), host, port, mlock, and extra arguments.
+  - Profile persistence in `%APPDATA%\LlamaLauncher\profiles\<id>.json`.
+  - Seeded starter templates: *Max GPU Offload (99 Layers)*, *Large Context 32K (KV Quantized)*, and *CPU Fallback (Low VRAM)*.
+  - Full profile lifecycle: create, save from active server configuration, duplicate, edit, and delete.
+  - 1-click **Apply to Server** and **Apply & Start** controls.
+  - Auto-profile lookup matching model file paths or filenames.
+- **Dedicated Model Library Tab**:
+  - Replaces placeholder view with an interactive, searchable library of all discovered GGUF models.
+  - Rich metadata extraction: architecture family badges (Gemma, Qwen, DeepSeek, Llama, etc.), quantization tags (`Q4_K_M`, `Q8_0`, `IQ4_XS`), and parameter sizes (`26B`, `7B`, etc.).
+  - Automatic vision projector pairing status badge (`Vision Paired: mmproj-...`).
+  - Active server model indicator badge (`ACTIVE IN SERVER`).
+  - 1-click actions: **Load in Server**, **Save Profile**, **Show in Explorer**, and **Copy Path**.
+  - Dynamic folder search management with chips for each scanned folder and custom directory removal.
+- **Dedicated Profiles Management Tab**:
+  - Replaces placeholder view with a grid of saved hardware and model presets.
+  - Interactive profile creation and editing modal dialogs with sliders and parameter dropdowns.
+- **Server Tab Profile Integration**:
+  - Direct Profile Quick-Selector dropdown integrated into the Server Tab model selection card.
+- **Phase 4 Test Suite**: Added comprehensive tests verifying metadata extraction, ModelProfile serialization roundtrip, and ProfileController operations.
+
 ## [0.3.0-telemetry] - 2026-09-29
 
 ### Added

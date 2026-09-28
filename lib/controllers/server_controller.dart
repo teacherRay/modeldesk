@@ -122,6 +122,16 @@ class ServerController extends ChangeNotifier {
     }
   }
 
+  Future<void> removeCustomModelFolder(String dir) async {
+    final norm = p.normalize(dir);
+    if (_config.customModelDirs.contains(norm)) {
+      _config.customModelDirs.remove(norm);
+      _scanner.removeDirectory(norm);
+      _saveConfig();
+      await rescanModels();
+    }
+  }
+
   Future<void> browseLlamaBin() async {
     final result = await FilePicker.pickFiles(
       dialogTitle: 'Select llama / llama-server Executable',

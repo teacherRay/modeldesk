@@ -4,17 +4,20 @@ import 'package:flutter/services.dart';
 import '../../core/theme.dart';
 import '../../controllers/server_controller.dart';
 import '../../controllers/hardware_controller.dart';
+import '../../controllers/profile_controller.dart';
 import '../widgets/status_badge.dart';
 import '../widgets/hardware_monitoring_card.dart';
 
 class ServerTab extends StatefulWidget {
   final ServerController serverController;
   final HardwareController? hardwareController;
+  final ProfileController? profileController;
 
   const ServerTab({
     super.key,
     required this.serverController,
     this.hardwareController,
+    this.profileController,
   });
 
   @override
@@ -242,6 +245,55 @@ class _ServerTabState extends State<ServerTab> {
             ],
           ),
           const SizedBox(height: 12),
+
+          // Profile Quick Selector
+          if (widget.profileController != null && widget.profileController!.profiles.isNotEmpty) ...[
+            ListenableBuilder(
+              listenable: widget.profileController!,
+              builder: (context, _) {
+                final profCtrl = widget.profileController!;
+                return Row(
+                  children: [
+                    const Icon(Icons.tune, size: 14, color: AppTheme.accent),
+                    const SizedBox(width: 6),
+                    const Text(
+                      'Tuned Profile:',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.textMuted),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: profCtrl.activeProfile?.id,
+                        isExpanded: true,
+                        dropdownColor: AppTheme.bgInput,
+                        decoration: const InputDecoration(
+                          hintText: 'Select a profile preset to apply...',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        ),
+                        items: profCtrl.profiles.map((p) {
+                          return DropdownMenuItem<String>(
+                            value: p.id,
+                            child: Text(
+                              '${p.name} (-ngl ${p.nGpuLayers}, -c ${p.ctxSize})',
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (id) {
+                          if (id != null) {
+                            final match = profCtrl.profiles.firstWhere((p) => p.id == id);
+                            profCtrl.applyProfile(match, srv);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
 
           // Active GGUF Model Selector
           const Text('Active GGUF Model:', style: TextStyle(fontSize: 12, color: AppTheme.textMuted)),

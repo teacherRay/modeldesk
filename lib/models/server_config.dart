@@ -165,6 +165,9 @@ class ServerConfig {
     return 'http://$h:$port';
   }
 
+  String get modelFileName => modelPath.isNotEmpty ? p.basename(modelPath) : '';
+  String get mmprojFileName => mmprojPath.isNotEmpty ? p.basename(mmprojPath) : '';
+
   ServerConfig copyWith({
     String? llamaBin,
     String? modelPath,
