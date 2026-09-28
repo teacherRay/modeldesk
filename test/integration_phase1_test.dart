@@ -29,6 +29,7 @@ void main() {
       llamaClient: llamaClient,
       storageService: storageService,
     );
+    serverController.updateConfig(config);
 
     // Print all server logs to stdout
     processService.logStream.listen((line) {

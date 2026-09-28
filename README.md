@@ -73,12 +73,29 @@ Developed and published by **Southern Apps**.
   - Quick action buttons on each model card: **Load in Server**, **Save Profile**, **Show in Explorer**, and **Copy Path**.
   - Dynamic folder search management with chips for each scanned folder and custom directory removal.
 
-### 6. Roadmap & Planned Capabilities
-- **Phase 1 (Complete)**: Native Flutter desktop app, token streaming, JSON persistence, conversation history.
-- **Phase 2 (Complete)**: Full interactive server parameters grid, model auto-discovery, mmproj pairing, native file/folder pickers.
-- **Phase 3 (Complete)**: Real-time hardware telemetry dashboard (CPU %, system RAM, DirectX DXGI dedicated VRAM, and AMD ADL die temperatures and board power).
-- **Phase 4 (Complete)**: Saved Model Profiles (e.g. *Gemma 4 Vision*, *Qwen Coder*, *Large Context 32K*), Model Library catalog, and auto-profile association.
-- **Phase 5**: UI polish, custom themes, and MSIX packaging for Microsoft Store distribution.
+### 6. Application Settings & Multi-Theme Engine
+- **Multi-Theme Engine**:
+  - **Catppuccin Mocha**: Modern slate dark palette with lavender and pastel cyan accents.
+  - **Midnight AMOLED**: True pitch-black (`#000000`) high-efficiency dark theme with emerald accents.
+  - **Nord Polar Night**: Calming arctic deep blue-gray palette with frost blue accents.
+  - Dynamic live switching across the entire UI without restarting.
+- **Hardware Telemetry Preferences**:
+  - Customizable sampling rate (1000ms, 1500ms, 3000ms, or Disabled).
+  - Bottom Hardware Status Bar visibility toggle.
+- **Server Automation**:
+  - Optional autostart of inference server on application launch.
+- **Data Maintenance & Safety Operations**:
+  - Reset server configuration to known-working defaults with safety confirmation.
+  - Reset model profiles to starter templates with safety confirmation.
+  - Clear conversation history with safety confirmation.
+  - 1-click button to open the local storage directory in Windows File Explorer.
+
+### 7. Roadmap & Milestone Overview
+- **Phase 1 (Complete - v0.1.0)**: Native Flutter desktop app, token streaming, JSON persistence, conversation history.
+- **Phase 2 (Complete - v0.2.0)**: Full interactive server parameters grid, model auto-discovery, mmproj pairing, native file/folder pickers.
+- **Phase 3 (Complete - v0.3.0)**: Real-time hardware telemetry dashboard (CPU %, system RAM, DirectX DXGI dedicated VRAM, and AMD ADL die temperatures and board power).
+- **Phase 4 (Complete - v0.4.0)**: Saved Model Profiles (e.g. *Gemma 4 Vision*, *Qwen Coder*, *Large Context 32K*), Model Library catalog, and auto-profile association.
+- **Phase 5 (Complete - v1.0.0)**: Application settings, multi-theme engine, data management, and release polish.
 
 ---
 
@@ -94,8 +111,9 @@ ModelDesk is built strictly around the **local inference philosophy**:
 
 ## 🚀 Current Status
 
-- **Status**: **Phase 4 Complete (Model Profiles & Library)**
-- **Milestone**: `v0.4.0-profiles`
+- **Status**: **v1.0.0 (Official Release)**
+- **Developer/Publisher**: Southern Apps
+- **Milestone Tag**: `v1.0.0`
 - **Supported Platforms**: Windows 10 / 11 (64-bit)
 
 ---

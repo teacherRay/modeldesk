@@ -21,11 +21,67 @@ class AppTheme {
   static const Color cyan = Color(0xFF89DCEB);
   static const Color progressBg = Color(0xFF181825);
 
-  static ThemeData get darkTheme {
+  static const Color midnightBg = Color(0xFF000000);
+  static const Color midnightCard = Color(0xFF121212);
+  static const Color midnightCardLight = Color(0xFF1A1A1A);
+  static const Color midnightInput = Color(0xFF1E1E1E);
+  static const Color midnightAccent = Color(0xFF10B981); // Emerald
+  static const Color midnightBorder = Color(0xFF2A2A2A);
+
+  static const Color nordBg = Color(0xFF2E3440);
+  static const Color nordCard = Color(0xFF3B4252);
+  static const Color nordCardLight = Color(0xFF434C5E);
+  static const Color nordInput = Color(0xFF4C566A);
+  static const Color nordAccent = Color(0xFF88C0D0); // Frost Blue
+  static const Color nordBorder = Color(0xFF4C566A);
+
+  static ThemeData get darkTheme => getTheme('catppuccin');
+
+  static ThemeData getTheme(String mode) {
+    switch (mode.toLowerCase()) {
+      case 'midnight':
+        return _buildTheme(
+          bgApp: midnightBg,
+          bgCard: midnightCard,
+          bgCardLight: midnightCardLight,
+          bgInput: midnightInput,
+          accent: midnightAccent,
+          border: midnightBorder,
+        );
+      case 'nord':
+        return _buildTheme(
+          bgApp: nordBg,
+          bgCard: nordCard,
+          bgCardLight: nordCardLight,
+          bgInput: nordInput,
+          accent: nordAccent,
+          border: nordBorder,
+        );
+      case 'catppuccin':
+      default:
+        return _buildTheme(
+          bgApp: bgApp,
+          bgCard: bgCard,
+          bgCardLight: bgCardLight,
+          bgInput: bgInput,
+          accent: accent,
+          border: border,
+        );
+    }
+  }
+
+  static ThemeData _buildTheme({
+    required Color bgApp,
+    required Color bgCard,
+    required Color bgCardLight,
+    required Color bgInput,
+    required Color accent,
+    required Color border,
+  }) {
     return ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: bgApp,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: ColorScheme.dark(
         primary: accent,
         surface: bgCard,
         surfaceContainerHighest: bgCardLight,
@@ -41,15 +97,15 @@ class AppTheme {
         hintStyle: const TextStyle(color: textSubtle, fontSize: 13),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: border),
+          borderSide: BorderSide(color: border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: border),
+          borderSide: BorderSide(color: border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: accent, width: 1.5),
+          borderSide: BorderSide(color: accent, width: 1.5),
         ),
       ),
     );

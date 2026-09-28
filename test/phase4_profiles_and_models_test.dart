@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:llama_launcher_flutter/models/gguf_model.dart';
 import 'package:llama_launcher_flutter/models/model_profile.dart';
@@ -135,8 +136,9 @@ void main() {
 
   group('Phase 4: ProfileController & Storage Integration', () {
     test('Seeds starter profiles, creates, duplicates, and applies profile', () async {
+      final tempDir = Directory.systemTemp.createTempSync('modeldesk_p4_storage_');
       final storage = StorageService();
-      await storage.init();
+      await storage.init(customPath: tempDir.path);
 
       final controller = ProfileController(storageService: storage);
       await controller.loadProfiles();

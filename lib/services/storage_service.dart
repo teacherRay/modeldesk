@@ -6,20 +6,27 @@ import 'package:path_provider/path_provider.dart';
 import '../models/conversation.dart';
 import '../models/server_config.dart';
 import '../models/model_profile.dart';
+import '../models/app_settings.dart';
 
 class StorageService {
   Directory? _dataDir;
   Directory? _chatsDir;
   Directory? _profilesDir;
 
-  Future<void> init() async {
-    try {
-      final appSupport = await getApplicationSupportDirectory();
-      _dataDir = Directory(p.join(appSupport.path, 'LlamaLauncher'));
-    } catch (_) {
-      // Fallback to local user profile directory
-      final userProfile = Platform.environment['USERPROFILE'] ?? '.';
-      _dataDir = Directory(p.join(userProfile, '.llama_launcher_flutter'));
+  String get appDataPath => _dataDir?.path ?? '';
+
+  Future<void> init({String? customPath}) async {
+    if (customPath != null && customPath.isNotEmpty) {
+      _dataDir = Directory(customPath);
+    } else {
+      try {
+        final appSupport = await getApplicationSupportDirectory();
+        _dataDir = Directory(p.join(appSupport.path, 'LlamaLauncher'));
+      } catch (_) {
+        // Fallback to local user profile directory
+        final userProfile = Platform.environment['USERPROFILE'] ?? '.';
+        _dataDir = Directory(p.join(userProfile, '.llama_launcher_flutter'));
+      }
     }
 
     if (!await _dataDir!.exists()) {
@@ -88,6 +95,20 @@ class StorageService {
     }
   }
 
+  Future<void> clearAllConversations() async {
+    await _ensureInitialized();
+    try {
+      final files = _chatsDir!.listSync().whereType<File>();
+      for (final f in files) {
+        if (f.path.endsWith('.json')) {
+          await f.delete();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error clearing conversations: $e');
+    }
+  }
+
   // --- Model Profiles ---
 
   Future<List<ModelProfile>> loadAllProfiles() async {
@@ -112,7 +133,6 @@ class StorageService {
     }
 
     if (list.isEmpty) {
-      // Seed default template profiles
       final defaults = _createDefaultProfiles();
       for (final def in defaults) {
         await saveProfile(def);
@@ -149,6 +169,24 @@ class StorageService {
       }
     } catch (e) {
       debugPrint('Error deleting profile $id: $e');
+    }
+  }
+
+  Future<void> resetProfiles() async {
+    await _ensureInitialized();
+    try {
+      final files = _profilesDir!.listSync().whereType<File>();
+      for (final f in files) {
+        if (f.path.endsWith('.json')) {
+          await f.delete();
+        }
+      }
+      final defaults = _createDefaultProfiles();
+      for (final def in defaults) {
+        await saveProfile(def);
+      }
+    } catch (e) {
+      debugPrint('Error resetting profiles: $e');
     }
   }
 
@@ -205,7 +243,6 @@ class StorageService {
         debugPrint('Error reading server_config.json: $e');
       }
     }
-    // Return known working default
     return ServerConfig.knownWorkingDefault();
   }
 
@@ -217,6 +254,38 @@ class StorageService {
       await configFile.writeAsString(jsonStr);
     } catch (e) {
       debugPrint('Error saving server_config.json: $e');
+    }
+  }
+
+  Future<void> resetServerConfig() async {
+    await saveServerConfig(ServerConfig.knownWorkingDefault());
+  }
+
+  // --- App Settings ---
+
+  Future<AppSettings> loadAppSettings() async {
+    await _ensureInitialized();
+    final settingsFile = File(p.join(_dataDir!.path, 'app_settings.json'));
+    if (await settingsFile.exists()) {
+      try {
+        final content = await settingsFile.readAsString();
+        final json = jsonDecode(content) as Map<String, dynamic>;
+        return AppSettings.fromJson(json);
+      } catch (e) {
+        debugPrint('Error reading app_settings.json: $e');
+      }
+    }
+    return AppSettings.defaultSettings();
+  }
+
+  Future<void> saveAppSettings(AppSettings settings) async {
+    await _ensureInitialized();
+    try {
+      final settingsFile = File(p.join(_dataDir!.path, 'app_settings.json'));
+      final jsonStr = const JsonEncoder.withIndent('  ').convert(settings.toJson());
+      await settingsFile.writeAsString(jsonStr);
+    } catch (e) {
+      debugPrint('Error saving app_settings.json: $e');
     }
   }
 

@@ -190,8 +190,9 @@ void main() {
 
   group('Phase 2: ServerController Integration Tests', () {
     test('ServerController dynamically updates config and notifies listeners', () async {
+      final tempDir = Directory.systemTemp.createTempSync('modeldesk_p2_storage_');
       final storage = StorageService();
-      await storage.init();
+      await storage.init(customPath: tempDir.path);
 
       final scanner = ModelScannerService(includeDefaultDirs: false);
       final process = ProcessService();

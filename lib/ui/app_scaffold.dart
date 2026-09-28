@@ -11,12 +11,15 @@ import 'tabs/chat_tab.dart';
 import 'tabs/server_tab.dart';
 import 'tabs/models_tab.dart';
 import 'tabs/profiles_tab.dart';
+import 'tabs/settings_tab.dart';
+import '../controllers/settings_controller.dart';
 
 class AppScaffold extends StatefulWidget {
   final ChatController chatController;
   final ServerController serverController;
   final HardwareController hardwareController;
   final ProfileController profileController;
+  final SettingsController settingsController;
 
   const AppScaffold({
     super.key,
@@ -24,6 +27,7 @@ class AppScaffold extends StatefulWidget {
     required this.serverController,
     required this.hardwareController,
     required this.profileController,
+    required this.settingsController,
   });
 
   @override
@@ -206,43 +210,20 @@ class _AppScaffoldState extends State<AppScaffold> with SingleTickerProviderStat
                   onNavigateToTab: (index) => _tabController.animateTo(index),
                 ),
 
-                // 5. Settings Tab (Phase 5 placeholder)
-                _buildPlaceholderTab(
-                  icon: Icons.settings_outlined,
-                  title: 'Settings',
-                  subtitle: 'Application preferences and store packaging will be configured in Phase 5.',
+                // 5. Settings Tab
+                SettingsTab(
+                  settingsController: widget.settingsController,
+                  serverController: widget.serverController,
+                  chatController: widget.chatController,
+                  profileController: widget.profileController,
                 ),
               ],
             ),
           ),
 
-          // Bottom Hardware Status Bar
-          HardwareStatusBar(hardwareController: widget.hardwareController),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPlaceholderTab({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-  }) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 48, color: AppTheme.textSubtle),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textMain),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            style: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
-          ),
+          // Bottom Hardware Status Bar (toggled by settings)
+          if (widget.settingsController.showHardwareBar)
+            HardwareStatusBar(hardwareController: widget.hardwareController),
         ],
       ),
     );

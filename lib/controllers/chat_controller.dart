@@ -43,6 +43,10 @@ class ChatController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reloadConversations() async {
+    await _loadConversations();
+  }
+
   void selectConversation(String id) {
     if (_isGenerating) return;
     final found = _conversations.firstWhere(

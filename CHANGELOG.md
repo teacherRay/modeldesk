@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.0] - 2026-09-29
+
+### Added
+- **Application Settings & Visual Preferences (Phase 5)**:
+  - Full-featured **Settings Tab** replacing the final placeholder view.
+  - **Multi-Theme Engine**:
+    - *Catppuccin Mocha*: Modern slate dark palette with lavender/cyan accents.
+    - *Midnight AMOLED*: True pitch-black (`#000000`) high-contrast theme with emerald accents.
+    - *Nord Polar Night*: Arctic deep blue-gray palette with frost blue accents.
+  - Dynamic real-time theme switching across all views without requiring an application restart.
+  - **Hardware Telemetry Preferences**:
+    - Adjustable polling interval (1000ms, 1500ms, 3000ms, or Disabled).
+    - Toggleable bottom Hardware Status Bar visibility.
+  - **Server Automation**:
+    - Optional automatic server startup when ModelDesk launches.
+  - **Data Maintenance & Safety Operations**:
+    - Clear All Conversations routine with interactive confirmation dialog.
+    - Reset Server Configuration to known-working defaults with confirmation.
+    - Reset Profiles to starter templates with confirmation.
+    - 1-click shortcut to open the application data directory (`%APPDATA%\LlamaLauncher`) in Windows Explorer.
+- **Publisher & Store Readiness**:
+  - Official product branding: **ModelDesk** by **Southern Apps**.
+  - Win32 executable metadata (`Runner.rc`) verified with ProductName "ModelDesk" and CompanyName "Southern Apps".
+  - Offline privacy guarantee: 100% on-device local execution, zero analytics or telemetry pings.
+- **Phase 5 Test Suite**: Added 7 comprehensive unit tests in `test/phase5_settings_and_polish_test.dart` validating AppSettings serialization, multi-theme palettes, SettingsController reactivity, and maintenance operations.
+
 ## [0.4.0-profiles] - 2026-09-29
 
 ### Added
