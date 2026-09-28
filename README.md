@@ -1,0 +1,96 @@
+# ModelDesk
+
+A modern, native Windows desktop application for running and interacting with local AI models through [llama.cpp](https://github.com/ggml-org/llama.cpp) / `llama-server`.
+
+Developed and published by **Southern Apps**.
+
+---
+
+## 🦙 Overview
+
+**ModelDesk** provides an intuitive, high-performance desktop interface designed specifically for local-first artificial intelligence on Windows. Instead of relying on cloud APIs or embedding full web browsers, ModelDesk acts as a dedicated companion and command center for `llama.cpp`, managing inference as a clean background child process and communicating directly with its native localhost API.
+
+---
+
+## ✨ Features & Architecture
+
+### 1. Native Flutter Chat Interface
+- **Direct Local Communication**: Connects directly to the running `llama-server` HTTP API (`/v1/chat/completions`) without an embedded browser.
+- **Real-Time Token Streaming**: Streams tokens into assistant responses with sub-millisecond UI updates.
+- **Generation Control**: Instant **Send** and **Stop Generation** controls that cleanly abort active HTTP streams.
+- **Thinking / Reasoning Support**: Collapsible reasoning accordion for thinking models (such as DeepSeek-R1 and Qwen Coder).
+- **Generation Telemetry**: Live performance metrics including tokens per second ($\text{tok/s}$) and total token counts.
+- **Smart Autoscroll**: Automatically scrolls down during generation, while allowing the user to freely scroll upward to inspect earlier responses without viewport jumping.
+
+### 2. Local-First JSON Persistence
+- **Zero Cloud & Zero Telemetry**: 100% offline and private. Prompts, responses, and conversation histories never leave your machine.
+- **Structured Storage**: Conversations are stored locally as clean, portable JSON files with unique IDs, titles, timestamps, and generation stats.
+- **Sidebar Management**: Dedicated conversation list with session switching, title editing, and deletion.
+- **Corrupted-File Resilience**: Graceful error handling protects existing history if a file is modified externally.
+
+### 3. Server Configuration & Process Control
+- **Child Process Management**: Spawns and manages `llama.exe` / `llama-server.exe` as background processes with hidden consoles.
+- **Process Tree Cleanup**: Uses Windows process tree termination (`taskkill /F /T`) to prevent orphaned background processes.
+- **Live Command Preview**: Real-time display of the exact generated `llama serve` CLI command with 1-click clipboard copying.
+- **Virtual Console Stream**: Streams interleaved `stdout`/`stderr` from the inference engine with ANSI stripping and autoscroll controls.
+
+### 4. Roadmap & Planned Capabilities
+- **Phase 2**: Full interactive server parameters grid (`-ngl`, `-c`, `-t`, `-fa`, `-ctk`, `-ctv`, `-np`, `--host`, `--port`, `--mlock`, extra flags) and model/mmproj file pickers.
+- **Phase 3**: Real-time hardware telemetry dashboard (CPU %, system RAM, DirectX DXGI dedicated VRAM, and AMD ADL / NVIDIA NVML die temperatures and board power).
+- **Phase 4**: Saved Model Profiles (e.g. *Gemma 4 Vision*, *Qwen Coder*, *Large Context 32K*) with automatic profile restoration for known models.
+- **Phase 5**: UI polish, custom themes, and MSIX packaging for Microsoft Store distribution.
+
+---
+
+## 🔒 Privacy & Local Operation
+
+ModelDesk is built strictly around the **local inference philosophy**:
+- No user accounts or login required.
+- No telemetry, analytics, or background pings.
+- No cloud dependencies or third-party tracking.
+- All models, prompts, weights, and conversations reside entirely on your personal computer.
+
+---
+
+## 🚀 Current Status
+
+- **Status**: **Phase 1 Complete (Baseline Frozen)**
+- **Milestone**: `v0.1.0-phase1`
+- **Supported Platforms**: Windows 10 / 11 (64-bit)
+
+---
+
+## 🛠 Building & Running from Source
+
+### Prerequisites
+- [Flutter SDK](https://docs.flutter.dev/) (3.24+ recommended)
+- [Visual Studio 2022](https://visualstudio.microsoft.com/) with the *Desktop development with C++* workload
+- [llama.cpp](https://github.com/ggml-org/llama.cpp) installed (`llama.exe` or `llama-server.exe` in PATH or `%USERPROFILE%\AppData\Local\Microsoft\WindowsApps`)
+
+### Getting Started
+```bash
+# Clone the repository
+git clone https://github.com/teacherRay/modeldesk.git
+cd modeldesk
+
+# Fetch dependencies
+flutter pub get
+
+# Run static analysis
+flutter analyze
+
+# Execute integration tests
+flutter test test/integration_phase1_test.dart
+
+# Build Windows Release executable
+flutter build windows
+```
+
+The compiled standalone executable will be located at:
+`build\windows\x64\runner\Release\llama_launcher_flutter.exe` (or double-click `run_app.bat`).
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

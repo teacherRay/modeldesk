@@ -1,0 +1,74 @@
+# Miscellaneous & Temporary
+*.class
+*.log
+*.pyc
+*.swp
+*.tmp
+*.bak
+*.pid
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+
+# IDE & Editor Caches
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+CMakeUserPresets.json
+
+# Flutter / Dart / Pub related
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+.widget_preview/
+
+# Windows Desktop build ephemeral files
+windows/flutter/ephemeral/
+windows/runner/Release/
+windows/runner/Debug/
+windows/runner/Profile/
+
+# Model Files (NEVER commit model weights)
+*.gguf
+*.bin
+*.safetensors
+*mmproj*
+mmproj*
+
+# User Data, Local Storage & Conversations (NEVER commit personal chats)
+chats/
+conversations/
+*.chat.json
+*.conversation.json
+
+# Local / Machine-Specific Configuration & Profiles
+server_config.json
+llama_launcher_config.json
+local_config.json
+*.profile.json
+profiles/
+
+# Secrets, Credentials, Tokens & Keys
+*.env
+*.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials.json
