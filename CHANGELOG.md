@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.1] - 2026-09-29
+
+### Changed
+- **Default GPU Layers (`-ngl`)**: Increased default GPU offload layers from `18` to `99` across default configuration templates and constructors, ensuring models are fully GPU-offloaded to VRAM by default.
+- **Config Schema Migration (v1 → v2)**:
+  - Added schema versioning (`config_version: 2`) to `ServerConfig`.
+  - Automatic migration detects legacy configurations carrying the old default `nGpuLayers: 18` and transparently upgrades them to `99`.
+  - Intentionally customized layer values (e.g. `0` for CPU-only or explicit counts like `42`) are strictly preserved.
+  - Migrated configuration is automatically persisted to disk on load.
+- **Enhanced llama.cpp Logging (`-lv 4`)**:
+  - Automatically appends `-lv 4` to server arguments if not already specified.
+  - Exposes detailed llama.cpp initialization diagnostics in the ModelDesk Server Console: Vulkan/ROCm device detection, layer offload breakdown, VRAM allocation, CPU spillover, and KV-cache placement.
+- **Authoritative Chat Generation Telemetry**:
+  - Chat completions request now specifies `'stream_options': {'include_usage': true}`.
+  - Strict separation of prompt prefill from token generation: generation stopwatch starts only upon arrival of the first output token chunk, eliminating TTFT skew.
+  - Generation speed (`tokensPerSec`) and token counts now prioritize authoritative `timings.predicted_per_second` and `timings.predicted_n` directly from llama-server's SSE stream instead of approximating from raw SSE message chunks.
+
+### Added
+- **Performance Regression Test Suite**: `test/v101_performance_regression_test.dart` validating default layers, config v2 migration rules, `-lv 4` argument injection, and custom argument overrides.
+
 ## [1.0.0] - 2026-09-29
 
 ### Added

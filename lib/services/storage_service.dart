@@ -238,7 +238,14 @@ class StorageService {
       try {
         final content = await configFile.readAsString();
         final json = jsonDecode(content) as Map<String, dynamic>;
-        return ServerConfig.fromJson(json);
+        final version = json['config_version'] as int? ?? 1;
+        final config = ServerConfig.fromJson(json);
+
+        // If from v1, write back the migrated config with config_version: 2
+        if (version < 2) {
+          await saveServerConfig(config);
+        }
+        return config;
       } catch (e) {
         debugPrint('Error reading server_config.json: $e');
       }

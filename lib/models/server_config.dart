@@ -17,12 +17,13 @@ class ServerConfig {
   bool mlock;
   String extraArgs;
   List<String> customModelDirs;
+  int configVersion;
 
   ServerConfig({
     required this.llamaBin,
     required this.modelPath,
     this.mmprojPath = '',
-    this.nGpuLayers = 18,
+    this.nGpuLayers = 99,
     this.threads = 6,
     this.ctxSize = '8192',
     this.flashAttn = 'on',
@@ -34,6 +35,7 @@ class ServerConfig {
     this.mlock = false,
     this.extraArgs = '',
     List<String>? customModelDirs,
+    this.configVersion = 2,
   }) : customModelDirs = customModelDirs ?? [];
 
   static String findDefaultLlamaBin() {
@@ -84,7 +86,7 @@ class ServerConfig {
       llamaBin: findDefaultLlamaBin(),
       modelPath: findDefaultModelPath(),
       mmprojPath: '',
-      nGpuLayers: 18,
+      nGpuLayers: 99,
       threads: 6,
       ctxSize: '8192',
       flashAttn: 'on',
@@ -96,6 +98,7 @@ class ServerConfig {
       mlock: false,
       extraArgs: '',
       customModelDirs: [],
+      configVersion: 2,
     );
   }
 
@@ -141,6 +144,11 @@ class ServerConfig {
     final p = port.trim().isEmpty ? '8080' : port.trim();
     args.addAll(['--port', p]);
 
+    // Ensure verbose output (level 4) for GPU offload, VRAM, and tensor placement visibility
+    if (!extraArgs.contains('-lv') && !extraArgs.contains('--verbose')) {
+      args.addAll(['-lv', '4']);
+    }
+
     if (extraArgs.trim().isNotEmpty) {
       final parts = extraArgs.trim().split(RegExp(r'\s+'));
       args.addAll(parts);
@@ -184,6 +192,7 @@ class ServerConfig {
     bool? mlock,
     String? extraArgs,
     List<String>? customModelDirs,
+    int? configVersion,
   }) {
     return ServerConfig(
       llamaBin: llamaBin ?? this.llamaBin,
@@ -201,6 +210,7 @@ class ServerConfig {
       mlock: mlock ?? this.mlock,
       extraArgs: extraArgs ?? this.extraArgs,
       customModelDirs: customModelDirs ?? List.from(this.customModelDirs),
+      configVersion: configVersion ?? this.configVersion,
     );
   }
 
@@ -221,15 +231,21 @@ class ServerConfig {
       'mlock': mlock,
       'extra_args': extraArgs,
       'custom_model_dirs': customModelDirs,
+      'config_version': configVersion,
     };
   }
 
   factory ServerConfig.fromJson(Map<String, dynamic> json) {
+    final version = json['config_version'] as int? ?? 1;
+    final rawNgl = json['n_gpu_layers'] as int?;
+    // Migrate legacy default 18 to 99, while preserving intentional customizations (e.g. 42 or 0)
+    final resolvedNgl = (version < 2 && rawNgl == 18) ? 99 : (rawNgl ?? 99);
+
     return ServerConfig(
       llamaBin: json['llama_bin'] as String? ?? findDefaultLlamaBin(),
       modelPath: json['model_path'] as String? ?? findDefaultModelPath(),
       mmprojPath: json['mmproj_path'] as String? ?? '',
-      nGpuLayers: json['n_gpu_layers'] as int? ?? 18,
+      nGpuLayers: resolvedNgl,
       threads: json['threads'] as int? ?? 6,
       ctxSize: json['ctx_size']?.toString() ?? '8192',
       flashAttn: json['flash_attn'] as String? ?? 'on',
@@ -244,6 +260,7 @@ class ServerConfig {
               ?.map((e) => e.toString())
               .toList() ??
           [],
+      configVersion: version < 2 ? 2 : version,
     );
   }
 }

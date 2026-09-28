@@ -79,11 +79,14 @@ class LlamaClient {
       'model': model,
       'messages': messagesPayload,
       'stream': true,
+      'stream_options': {'include_usage': true},
       'temperature': temperature,
     });
 
-    final stopwatch = Stopwatch()..start();
-    var tokenCount = 0;
+    Stopwatch? generationStopwatch;
+    var receivedChunks = 0;
+    double? authoritativeTps;
+    int? authoritativeTotalTokens;
 
     try {
       final uri = Uri.parse('$baseUrl/v1/chat/completions');
@@ -118,19 +121,46 @@ class LlamaClient {
         if (trimmed.startsWith('data: ')) {
           final dataStr = trimmed.substring(6).trim();
           if (dataStr == '[DONE]') {
-            stopwatch.stop();
-            final durationSec = stopwatch.elapsedMilliseconds / 1000.0;
-            final tps = durationSec > 0 ? (tokenCount / durationSec) : 0.0;
+            generationStopwatch?.stop();
+            final durationSec =
+                (generationStopwatch?.elapsedMilliseconds ?? 0) / 1000.0;
+            final fallbackTps =
+                durationSec > 0 ? (receivedChunks / durationSec) : 0.0;
+
+            final finalTps = authoritativeTps ?? fallbackTps;
+            final finalTokens = authoritativeTotalTokens ?? receivedChunks;
+
             yield ChatStreamChunk(
               isDone: true,
-              tokensPerSec: tps,
-              totalTokens: tokenCount,
+              tokensPerSec: finalTps,
+              totalTokens: finalTokens,
             );
             break;
           }
 
           try {
             final parsed = jsonDecode(dataStr) as Map<String, dynamic>;
+
+            // Extract authoritative timings from llama.cpp if present
+            final timings = parsed['timings'] as Map<String, dynamic>?;
+            if (timings != null) {
+              if (timings['predicted_per_second'] != null) {
+                authoritativeTps =
+                    (timings['predicted_per_second'] as num).toDouble();
+              }
+              if (timings['predicted_n'] != null) {
+                authoritativeTotalTokens =
+                    (timings['predicted_n'] as num).toInt();
+              }
+            }
+
+            // Extract authoritative usage from OpenAI/llama.cpp usage block if present
+            final usage = parsed['usage'] as Map<String, dynamic>?;
+            if (usage != null && usage['completion_tokens'] != null) {
+              authoritativeTotalTokens =
+                  (usage['completion_tokens'] as num).toInt();
+            }
+
             final choices = parsed['choices'] as List<dynamic>?;
             if (choices != null && choices.isNotEmpty) {
               final firstChoice = choices[0] as Map<String, dynamic>;
@@ -141,17 +171,24 @@ class LlamaClient {
                 final reasoning = delta['reasoning_content'] as String?;
 
                 if (content.isNotEmpty || reasoning != null) {
-                  tokenCount++;
-                  final durationSec = stopwatch.elapsedMilliseconds / 1000.0;
-                  final currentTps =
-                      durationSec > 0 ? (tokenCount / durationSec) : 0.0;
+                  // Prompt prefill timing separation:
+                  // Only start generationStopwatch on the FIRST received token/chunk!
+                  // This ensures prefill/prompt eval time is NEVER counted as generation time.
+                  generationStopwatch ??= Stopwatch()..start();
+                  receivedChunks++;
+
+                  final durationSec =
+                      generationStopwatch.elapsedMilliseconds / 1000.0;
+                  final liveTps = (durationSec > 0.05 && receivedChunks >= 2)
+                      ? (receivedChunks / durationSec)
+                      : null;
 
                   yield ChatStreamChunk(
                     deltaText: content,
                     reasoningDelta: reasoning,
                     isDone: false,
-                    tokensPerSec: currentTps,
-                    totalTokens: tokenCount,
+                    tokensPerSec: authoritativeTps ?? liveTps,
+                    totalTokens: authoritativeTotalTokens ?? receivedChunks,
                   );
                 }
               }
