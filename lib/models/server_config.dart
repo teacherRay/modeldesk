@@ -16,6 +16,7 @@ class ServerConfig {
   String port;
   bool mlock;
   String extraArgs;
+  List<String> customModelDirs;
 
   ServerConfig({
     required this.llamaBin,
@@ -32,7 +33,8 @@ class ServerConfig {
     this.port = '8080',
     this.mlock = false,
     this.extraArgs = '',
-  });
+    List<String>? customModelDirs,
+  }) : customModelDirs = customModelDirs ?? [];
 
   static String findDefaultLlamaBin() {
     if (Platform.isWindows) {
@@ -67,7 +69,7 @@ class ServerConfig {
               if (entity is File &&
                   entity.path.toLowerCase().endsWith('.gguf') &&
                   !p.basename(entity.path).toLowerCase().startsWith('mmproj')) {
-                return entity.path;
+                return p.normalize(entity.path);
               }
             }
           } catch (_) {}
@@ -93,6 +95,7 @@ class ServerConfig {
       port: '8080',
       mlock: false,
       extraArgs: '',
+      customModelDirs: [],
     );
   }
 
@@ -162,6 +165,42 @@ class ServerConfig {
     return 'http://$h:$port';
   }
 
+  ServerConfig copyWith({
+    String? llamaBin,
+    String? modelPath,
+    String? mmprojPath,
+    int? nGpuLayers,
+    int? threads,
+    String? ctxSize,
+    String? flashAttn,
+    String? cacheTypeK,
+    String? cacheTypeV,
+    int? parallel,
+    String? host,
+    String? port,
+    bool? mlock,
+    String? extraArgs,
+    List<String>? customModelDirs,
+  }) {
+    return ServerConfig(
+      llamaBin: llamaBin ?? this.llamaBin,
+      modelPath: modelPath ?? this.modelPath,
+      mmprojPath: mmprojPath ?? this.mmprojPath,
+      nGpuLayers: nGpuLayers ?? this.nGpuLayers,
+      threads: threads ?? this.threads,
+      ctxSize: ctxSize ?? this.ctxSize,
+      flashAttn: flashAttn ?? this.flashAttn,
+      cacheTypeK: cacheTypeK ?? this.cacheTypeK,
+      cacheTypeV: cacheTypeV ?? this.cacheTypeV,
+      parallel: parallel ?? this.parallel,
+      host: host ?? this.host,
+      port: port ?? this.port,
+      mlock: mlock ?? this.mlock,
+      extraArgs: extraArgs ?? this.extraArgs,
+      customModelDirs: customModelDirs ?? List.from(this.customModelDirs),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'llama_bin': llamaBin,
@@ -178,6 +217,7 @@ class ServerConfig {
       'port': port,
       'mlock': mlock,
       'extra_args': extraArgs,
+      'custom_model_dirs': customModelDirs,
     };
   }
 
@@ -197,6 +237,10 @@ class ServerConfig {
       port: json['port']?.toString() ?? '8080',
       mlock: json['mlock'] as bool? ?? false,
       extraArgs: json['extra_args'] as String? ?? '',
+      customModelDirs: (json['custom_model_dirs'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
     );
   }
 }

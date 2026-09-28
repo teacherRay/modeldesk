@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0-server] - 2026-09-29
+
+### Added
+- **Model Auto-Discovery & Scanning**: Automatic recursive scanning of standard model directories (`~/.lmstudio/models`, `~/models`) and custom user-specified folders for `.gguf` files.
+- **Multimodal Projector Separation & Auto-Pairing**: Automatically differentiates LLM weights from multimodal projectors (`mmproj-*.gguf`), pairing matching vision projectors located in the same directory.
+- **Native File & Directory Browsers**: Integrated Windows file dialogs (`file_picker`) for selecting `.gguf` models, `mmproj` files, custom model directories, and custom `llama.exe` binaries.
+- **Comprehensive Server Parameter Controls**:
+  - GPU Layer Offloading (`-ngl`) with quick "All (99)" and "CPU (0)" presets.
+  - Context Window Size (`-c`) with standard presets (2K to 128K) and custom entry.
+  - CPU inference thread count (`-t`) spinbox.
+  - Flash Attention (`-fa`) toggle (on / off).
+  - KV Cache Quantization (`-ctk`, `-ctv`) dropdowns (`q8_0`, `q4_0`, `f16`).
+  - Parallel Processing Slots (`-np`) control.
+  - Network host and port configuration (`--host`, `--port`).
+  - Memory locking toggle (`--mlock`) to prevent paging.
+  - Custom Extra CLI flags field for advanced arguments.
+- **Live Reactive Command Preview**: Real-time preview of the exact `llama-server` CLI invocation with one-click clipboard copy.
+- **Two-Column Server Desktop Dashboard**: Clean separation between server controls/configuration and the live ANSI-stripped virtualized console stream.
+- **Persistent Configuration**: Auto-saves and restores all server parameters and custom directories across app sessions in `server_config.json`.
+- **Phase 2 Test Suite**: Added dedicated tests covering parameter serialization, command building, model scanning, and controller reactivity.
+
 ## [0.1.0-phase1] - 2026-09-29
 
 ### Added

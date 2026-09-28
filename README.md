@@ -29,13 +29,27 @@ Developed and published by **Southern Apps**.
 - **Corrupted-File Resilience**: Graceful error handling protects existing history if a file is modified externally.
 
 ### 3. Server Configuration & Process Control
+- **Model Auto-Discovery**: Automatic recursive scanning of standard model directories (`~/.lmstudio/models`, `~/models`) and custom user-specified folders for `.gguf` files.
+- **Multimodal Projector Separation & Auto-Pairing**: Distinguishes LLM weights from multimodal projector models (`mmproj-*.gguf`), auto-detecting and pairing matching vision projectors located in the same directory.
+- **Native File Dialogs**: Interactive Windows file dialogs to browse `.gguf` models, vision `mmproj` projectors, custom model search folders, and `llama.exe` executable locations.
+- **Comprehensive Parameter Tuning**:
+  - GPU Layer Offloading (`-ngl`) with quick "All (99)" and "CPU (0)" presets.
+  - Context Window Size (`-c`) presets (2K to 128K) and custom input.
+  - CPU Inference Threads (`-t`) spinbox control.
+  - Flash Attention (`-fa`) toggle (on / off).
+  - KV Cache Quantization (`-ctk`, `-ctv`) dropdown selectors (`q8_0`, `q4_0`, `f16`).
+  - Parallel Processing Slots (`-np`) control.
+  - Host (`--host`) and Port (`--port`) network binding.
+  - Memory Locking (`--mlock`) toggle to keep model memory resident.
+  - Custom Extra Arguments input field for arbitrary flags.
 - **Child Process Management**: Spawns and manages `llama.exe` / `llama-server.exe` as background processes with hidden consoles.
 - **Process Tree Cleanup**: Uses Windows process tree termination (`taskkill /F /T`) to prevent orphaned background processes.
 - **Live Command Preview**: Real-time display of the exact generated `llama serve` CLI command with 1-click clipboard copying.
 - **Virtual Console Stream**: Streams interleaved `stdout`/`stderr` from the inference engine with ANSI stripping and autoscroll controls.
 
 ### 4. Roadmap & Planned Capabilities
-- **Phase 2**: Full interactive server parameters grid (`-ngl`, `-c`, `-t`, `-fa`, `-ctk`, `-ctv`, `-np`, `--host`, `--port`, `--mlock`, extra flags) and model/mmproj file pickers.
+- **Phase 1 (Complete)**: Native Flutter desktop app, token streaming, JSON persistence, conversation history.
+- **Phase 2 (Complete)**: Full interactive server parameters grid, model auto-discovery, mmproj pairing, native file/folder pickers.
 - **Phase 3**: Real-time hardware telemetry dashboard (CPU %, system RAM, DirectX DXGI dedicated VRAM, and AMD ADL / NVIDIA NVML die temperatures and board power).
 - **Phase 4**: Saved Model Profiles (e.g. *Gemma 4 Vision*, *Qwen Coder*, *Large Context 32K*) with automatic profile restoration for known models.
 - **Phase 5**: UI polish, custom themes, and MSIX packaging for Microsoft Store distribution.
@@ -54,8 +68,8 @@ ModelDesk is built strictly around the **local inference philosophy**:
 
 ## 🚀 Current Status
 
-- **Status**: **Phase 1 Complete (Baseline Frozen)**
-- **Milestone**: `v0.1.0-phase1`
+- **Status**: **Phase 2 Complete (Server Controls & Model Discovery)**
+- **Milestone**: `v0.2.0-server`
 - **Supported Platforms**: Windows 10 / 11 (64-bit)
 
 ---
