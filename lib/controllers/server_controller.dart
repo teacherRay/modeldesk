@@ -40,6 +40,7 @@ class ServerController extends ChangeNotifier {
   bool get isRunning => status == ServerStatus.running;
   bool get isStarting => status == ServerStatus.starting;
   bool get isStopped => status == ServerStatus.stopped || status == ServerStatus.error;
+  int? get serverPid => _processService.pid;
   List<String> get consoleLogs => List.unmodifiable(_consoleLogs);
   bool get isScanningModels => _isScanningModels;
 

@@ -3,12 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme.dart';
 import '../../controllers/server_controller.dart';
+import '../../controllers/hardware_controller.dart';
 import '../widgets/status_badge.dart';
+import '../widgets/hardware_monitoring_card.dart';
 
 class ServerTab extends StatefulWidget {
   final ServerController serverController;
+  final HardwareController? hardwareController;
 
-  const ServerTab({super.key, required this.serverController});
+  const ServerTab({
+    super.key,
+    required this.serverController,
+    this.hardwareController,
+  });
 
   @override
   State<ServerTab> createState() => _ServerTabState();
@@ -78,6 +85,12 @@ class _ServerTabState extends State<ServerTab> {
                   // Top Control Bar
                   _buildControlHeader(srv, config),
                   const SizedBox(height: 12),
+
+                  // Hardware Telemetry Dashboard
+                  if (widget.hardwareController != null) ...[
+                    HardwareMonitoringCard(hardwareController: widget.hardwareController!),
+                    const SizedBox(height: 12),
+                  ],
 
                   // 1. Model Selection Card
                   _buildModelCard(srv, config),

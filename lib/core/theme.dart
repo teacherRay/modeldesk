@@ -19,6 +19,7 @@ class AppTheme {
   static const Color warning = Color(0xFFF9E2AF);
   static const Color danger = Color(0xFFF38BA8);
   static const Color cyan = Color(0xFF89DCEB);
+  static const Color progressBg = Color(0xFF181825);
 
   static ThemeData get darkTheme {
     return ThemeData(

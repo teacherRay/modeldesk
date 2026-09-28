@@ -3,18 +3,22 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../controllers/chat_controller.dart';
 import '../controllers/server_controller.dart';
+import '../controllers/hardware_controller.dart';
 import 'widgets/status_badge.dart';
+import 'widgets/hardware_status_bar.dart';
 import 'tabs/chat_tab.dart';
 import 'tabs/server_tab.dart';
 
 class AppScaffold extends StatefulWidget {
   final ChatController chatController;
   final ServerController serverController;
+  final HardwareController hardwareController;
 
   const AppScaffold({
     super.key,
     required this.chatController,
     required this.serverController,
+    required this.hardwareController,
   });
 
   @override
@@ -179,6 +183,7 @@ class _AppScaffoldState extends State<AppScaffold> with SingleTickerProviderStat
                 // 2. Server Control & Logs Tab
                 ServerTab(
                   serverController: widget.serverController,
+                  hardwareController: widget.hardwareController,
                 ),
 
                 // 3. Models Tab (Phase 4 placeholder)
@@ -204,6 +209,9 @@ class _AppScaffoldState extends State<AppScaffold> with SingleTickerProviderStat
               ],
             ),
           ),
+
+          // Bottom Hardware Status Bar
+          HardwareStatusBar(hardwareController: widget.hardwareController),
         ],
       ),
     );

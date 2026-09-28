@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0-telemetry] - 2026-09-29
+
+### Added
+- **Native Dart FFI Telemetry Engine**: 100% native Windows telemetry without Python dependencies or external helper binaries using `dart:ffi`.
+- **DirectX DXGI Adapter Query**: Interrogates DXGI COM interfaces (`CreateDXGIFactory`, `EnumAdapters`, `GetDesc`) to discover discrete GPU model names and exact dedicated VRAM capacities.
+- **AMD Display Library (ADL) Integration**: Direct C FFI binding with `atiadlxx.dll` via `msvcrt.dll` `malloc`:
+  - Real-time 3D GPU engine activity (%).
+  - Dedicated VRAM consumption (MB).
+  - Multi-point thermal monitoring (Edge, Hotspot/Junction, and Memory temperatures in °C).
+  - Live board power consumption (Watts).
+  - GPU core (GFX) and memory (MEM) clock frequencies (MHz).
+- **Windows System RAM & CPU Monitoring**:
+  - Physical RAM total, available, and load percentage via `GlobalMemoryStatusEx`.
+  - High-precision delta-based system CPU utilization via `GetSystemTimes`.
+- **Process Resource Attribution for `llama-server`**:
+  - Tracks the exact working set memory (RAM MB/GB) and CPU utilization of the active `llama-server` child process via `K32GetProcessMemoryInfo` and `GetProcessTimes`.
+- **Server Tab Telemetry Dashboard**: 4 rich responsive tiles (CPU, RAM, GPU, Dedicated VRAM) with color-coded progress bars, thermal tags, and board power.
+- **Persistent Bottom Hardware Status Bar**: Compact, unobtrusive 32px status strip anchored at the bottom of the window across all tabs (including Chat) with live heartbeat pulse indicator.
+- **Phase 3 Test Suite**: Comprehensive tests covering telemetry calculation, FFI execution, polling stream emissions, and controller lifecycle.
+
 ## [0.2.0-server] - 2026-09-29
 
 ### Added

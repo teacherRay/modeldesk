@@ -5,6 +5,7 @@ import 'services/llama_client.dart';
 import 'services/storage_service.dart';
 import 'controllers/server_controller.dart';
 import 'controllers/chat_controller.dart';
+import 'controllers/hardware_controller.dart';
 import 'ui/app_scaffold.dart';
 
 void main() async {
@@ -27,26 +28,33 @@ void main() async {
     storageService: storageService,
   );
 
+  final hardwareController = HardwareController(
+    pidProvider: () => serverController.serverPid,
+  );
+
   runApp(LlamaLauncherApp(
     serverController: serverController,
     chatController: chatController,
+    hardwareController: hardwareController,
   ));
 }
 
 class LlamaLauncherApp extends StatelessWidget {
   final ServerController serverController;
   final ChatController chatController;
+  final HardwareController hardwareController;
 
   const LlamaLauncherApp({
     super.key,
     required this.serverController,
     required this.chatController,
+    required this.hardwareController,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Listenable.merge([serverController, chatController]),
+      listenable: Listenable.merge([serverController, chatController, hardwareController]),
       builder: (context, _) {
         return MaterialApp(
           title: 'ModelDesk',
@@ -55,6 +63,7 @@ class LlamaLauncherApp extends StatelessWidget {
           home: AppScaffold(
             chatController: chatController,
             serverController: serverController,
+            hardwareController: hardwareController,
           ),
         );
       },

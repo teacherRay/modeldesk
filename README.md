@@ -47,10 +47,20 @@ Developed and published by **Southern Apps**.
 - **Live Command Preview**: Real-time display of the exact generated `llama serve` CLI command with 1-click clipboard copying.
 - **Virtual Console Stream**: Streams interleaved `stdout`/`stderr` from the inference engine with ANSI stripping and autoscroll controls.
 
-### 4. Roadmap & Planned Capabilities
+### 4. Real-Time Hardware Telemetry (Zero-Python Native FFI)
+- **100% Native Windows Integration**: Pure Dart FFI integration (`dart:ffi`) communicating directly with Windows subsystem DLLs without Python or helper subprocesses.
+- **DirectX DXGI VRAM & GPU Discovery**: Enumerates DXGI adapters to identify exact GPU models and dedicated video memory (VRAM) headroom in bytes.
+- **AMD Display Library (ADL) Sensors**: Interrogates `atiadlxx.dll` for real-time 3D GPU engine load (%), dedicated VRAM usage (MB), multi-point temperatures (Edge, Hotspot/Junction, Memory in °C), board power (Watts), and core/memory clocks (MHz).
+- **System Memory & CPU Load**: Queries `GlobalMemoryStatusEx` and delta-based `GetSystemTimes` for instantaneous CPU % and physical RAM utilization.
+- **Inference Process Attribution**: Automatically measures the active `llama-server` process's working set memory and CPU footprint via `K32GetProcessMemoryInfo` and `GetProcessTimes`.
+- **Telemetry UI**:
+  - **Server Tab Dashboard**: 4 rich tiles displaying CPU, RAM, GPU, and VRAM with Catppuccin theme color thresholds.
+  - **Persistent Bottom Status Bar**: Unobtrusive 32px telemetry strip anchored across all tabs with live pulsing heartbeat indicator.
+
+### 5. Roadmap & Planned Capabilities
 - **Phase 1 (Complete)**: Native Flutter desktop app, token streaming, JSON persistence, conversation history.
 - **Phase 2 (Complete)**: Full interactive server parameters grid, model auto-discovery, mmproj pairing, native file/folder pickers.
-- **Phase 3**: Real-time hardware telemetry dashboard (CPU %, system RAM, DirectX DXGI dedicated VRAM, and AMD ADL / NVIDIA NVML die temperatures and board power).
+- **Phase 3 (Complete)**: Real-time hardware telemetry dashboard (CPU %, system RAM, DirectX DXGI dedicated VRAM, and AMD ADL die temperatures and board power).
 - **Phase 4**: Saved Model Profiles (e.g. *Gemma 4 Vision*, *Qwen Coder*, *Large Context 32K*) with automatic profile restoration for known models.
 - **Phase 5**: UI polish, custom themes, and MSIX packaging for Microsoft Store distribution.
 
@@ -68,8 +78,8 @@ ModelDesk is built strictly around the **local inference philosophy**:
 
 ## 🚀 Current Status
 
-- **Status**: **Phase 2 Complete (Server Controls & Model Discovery)**
-- **Milestone**: `v0.2.0-server`
+- **Status**: **Phase 3 Complete (Hardware Telemetry)**
+- **Milestone**: `v0.3.0-telemetry`
 - **Supported Platforms**: Windows 10 / 11 (64-bit)
 
 ---
