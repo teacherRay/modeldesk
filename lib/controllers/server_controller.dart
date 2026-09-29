@@ -46,6 +46,7 @@ class ServerController extends ChangeNotifier {
 
   List<GgufModelInfo> get availableModels => _scanner.models;
   List<GgufModelInfo> get availableMmprojs => _scanner.mmprojs;
+  LlamaClient get llamaClient => _llamaClient;
 
   Future<void> _init() async {
     _config = await _storageService.loadServerConfig();

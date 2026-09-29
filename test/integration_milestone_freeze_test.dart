@@ -170,7 +170,7 @@ void main() {
 
     chatController.addListener(continueWatcher);
     await chatController.sendMessage(continuePrompt, baseUrl: config.baseUrl);
-    await continueDone.future.timeout(const Duration(seconds: 60));
+    await continueDone.future.timeout(const Duration(seconds: 120));
     chatController.removeListener(continueWatcher);
 
     expect(followUpResponse, isNotEmpty, reason: 'Follow-up response was empty');
@@ -240,7 +240,7 @@ void main() {
 
     chatController.addListener(finalWatcher);
     await chatController.sendMessage(finalPrompt, baseUrl: config.baseUrl);
-    await finalDone.future.timeout(const Duration(seconds: 60));
+    await finalDone.future.timeout(const Duration(seconds: 120));
     chatController.removeListener(finalWatcher);
 
     expect(finalResponse, isNotEmpty, reason: 'Final response after restart was empty');

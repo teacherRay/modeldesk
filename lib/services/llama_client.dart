@@ -9,6 +9,10 @@ class ChatStreamChunk {
   final bool isDone;
   final double? tokensPerSec;
   final int? totalTokens;
+  final int? promptTokens;
+  final double? promptPerSec;
+  final double? promptEvalTimeMs;
+  final double? timeToFirstTokenMs;
 
   ChatStreamChunk({
     this.deltaText = '',
@@ -16,6 +20,10 @@ class ChatStreamChunk {
     this.isDone = false,
     this.tokensPerSec,
     this.totalTokens,
+    this.promptTokens,
+    this.promptPerSec,
+    this.promptEvalTimeMs,
+    this.timeToFirstTokenMs,
   });
 }
 
@@ -83,10 +91,15 @@ class LlamaClient {
       'temperature': temperature,
     });
 
+    final dispatchStopwatch = Stopwatch()..start();
+    double? actualTtftMs;
     Stopwatch? generationStopwatch;
     var receivedChunks = 0;
     double? authoritativeTps;
     int? authoritativeTotalTokens;
+    int? authoritativePromptTokens;
+    double? authoritativePromptPerSec;
+    double? authoritativePromptEvalMs;
 
     try {
       final uri = Uri.parse('$baseUrl/v1/chat/completions');
@@ -134,6 +147,10 @@ class LlamaClient {
               isDone: true,
               tokensPerSec: finalTps,
               totalTokens: finalTokens,
+              promptTokens: authoritativePromptTokens,
+              promptPerSec: authoritativePromptPerSec,
+              promptEvalTimeMs: authoritativePromptEvalMs,
+              timeToFirstTokenMs: actualTtftMs,
             );
             break;
           }
@@ -152,13 +169,31 @@ class LlamaClient {
                 authoritativeTotalTokens =
                     (timings['predicted_n'] as num).toInt();
               }
+              if (timings['prompt_n'] != null) {
+                authoritativePromptTokens =
+                    (timings['prompt_n'] as num).toInt();
+              }
+              if (timings['prompt_per_second'] != null) {
+                authoritativePromptPerSec =
+                    (timings['prompt_per_second'] as num).toDouble();
+              }
+              if (timings['prompt_ms'] != null) {
+                authoritativePromptEvalMs =
+                    (timings['prompt_ms'] as num).toDouble();
+              }
             }
 
             // Extract authoritative usage from OpenAI/llama.cpp usage block if present
             final usage = parsed['usage'] as Map<String, dynamic>?;
-            if (usage != null && usage['completion_tokens'] != null) {
-              authoritativeTotalTokens =
-                  (usage['completion_tokens'] as num).toInt();
+            if (usage != null) {
+              if (usage['completion_tokens'] != null) {
+                authoritativeTotalTokens =
+                    (usage['completion_tokens'] as num).toInt();
+              }
+              if (usage['prompt_tokens'] != null) {
+                authoritativePromptTokens ??=
+                    (usage['prompt_tokens'] as num).toInt();
+              }
             }
 
             final choices = parsed['choices'] as List<dynamic>?;
@@ -171,14 +206,16 @@ class LlamaClient {
                 final reasoning = delta['reasoning_content'] as String?;
 
                 if (content.isNotEmpty || reasoning != null) {
-                  // Prompt prefill timing separation:
-                  // Only start generationStopwatch on the FIRST received token/chunk!
-                  // This ensures prefill/prompt eval time is NEVER counted as generation time.
-                  generationStopwatch ??= Stopwatch()..start();
+                  // Actual TTFT measured from request dispatch until first generated chunk
+                  if (actualTtftMs == null) {
+                    actualTtftMs = dispatchStopwatch.elapsedMilliseconds.toDouble();
+                    generationStopwatch ??= Stopwatch()..start();
+                  }
+
                   receivedChunks++;
 
                   final durationSec =
-                      generationStopwatch.elapsedMilliseconds / 1000.0;
+                      (generationStopwatch?.elapsedMilliseconds ?? 0) / 1000.0;
                   final liveTps = (durationSec > 0.05 && receivedChunks >= 2)
                       ? (receivedChunks / durationSec)
                       : null;
@@ -189,6 +226,10 @@ class LlamaClient {
                     isDone: false,
                     tokensPerSec: authoritativeTps ?? liveTps,
                     totalTokens: authoritativeTotalTokens ?? receivedChunks,
+                    promptTokens: authoritativePromptTokens,
+                    promptPerSec: authoritativePromptPerSec,
+                    promptEvalTimeMs: authoritativePromptEvalMs,
+                    timeToFirstTokenMs: actualTtftMs,
                   );
                 }
               }

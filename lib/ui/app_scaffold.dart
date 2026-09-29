@@ -5,8 +5,10 @@ import '../controllers/chat_controller.dart';
 import '../controllers/server_controller.dart';
 import '../controllers/hardware_controller.dart';
 import '../controllers/profile_controller.dart';
+import 'package:flutter/services.dart';
 import 'widgets/status_badge.dart';
 import 'widgets/hardware_status_bar.dart';
+import 'widgets/benchmark_runner_dialog.dart';
 import 'tabs/chat_tab.dart';
 import 'tabs/server_tab.dart';
 import 'tabs/models_tab.dart';
@@ -52,12 +54,34 @@ class _AppScaffoldState extends State<AppScaffold> with SingleTickerProviderStat
     } catch (_) {}
   }
 
+  void _openBenchmarkRunner() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => BenchmarkRunnerDialog(
+        serverController: widget.serverController,
+        llamaClient: widget.serverController.llamaClient,
+        hardwareMonitor: widget.hardwareController.monitorService,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final srv = widget.serverController;
 
-    return Scaffold(
-      body: Column(
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(
+          LogicalKeyboardKey.keyB,
+          control: true,
+          shift: true,
+        ): _openBenchmarkRunner,
+      },
+      child: Focus(
+        autofocus: true,
+        child: Scaffold(
+          body: Column(
         children: [
           // Header Bar
           Container(
@@ -226,6 +250,8 @@ class _AppScaffoldState extends State<AppScaffold> with SingleTickerProviderStat
             HardwareStatusBar(hardwareController: widget.hardwareController),
         ],
       ),
+    ),
+    ),
     );
   }
 

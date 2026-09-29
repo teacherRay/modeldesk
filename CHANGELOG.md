@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-09-29
+
+### Added
+- **Developer Benchmark Runner (`MD-Bench 1.0`)**:
+  - Hidden developer tool invoked anywhere in ModelDesk using the global shortcut `Ctrl+Shift+B`.
+  - Discovers all locally installed GGUF models from the Model Library with selection checkboxes.
+  - Fully unattended sequential execution across all selected models with clean server start, readiness verification, execution, shutdown, and config restoration.
+  - Complete isolation from standard user chat history, active profiles, and server settings.
+  - Guaranteed restoration: original server configuration, model selection, and running state are safely restored in a `finally` block even upon failure or user cancellation.
+- **Fixed Benchmark Suite**:
+  - Versioned standard configuration: 4096 context, 99 GPU layers, 6 threads, Flash Attention enabled, temperature 0.0.
+  - Four standardized evaluation tasks:
+    1. *General Knowledge / Prose*: 1,000-word Titanic maiden voyage narrative (for qualitative inspection of factual hallucinations).
+    2. *Deterministic Logic / Reasoning*: 4-scientist observation shift scheduling puzzle with unique verifiable answer (`48`).
+    3. *Python Coding*: `flatten_and_unique(nested_list)` scored against 5 automated test vectors in an isolated Python runner subprocess.
+    4. *Strict Instruction Following*: Space exploration paragraph evaluated across 5 machine-checkable structural constraints.
+- **Telemetry & Fingerprinting**:
+  - True client-side Time-to-First-Token (TTFT) recorded independently from server request dispatch to first content chunk.
+  - Authoritative Prompt Evaluation Time (`prompt_ms`) and prompt tokens/s from llama.cpp server telemetry.
+  - Generation speed (`predicted_per_second`), total token counts, and layer offload verification via log scraping.
+  - Streaming SHA-256 fingerprinting for GGUF model files with persistent caching at `%APPDATA%\LlamaLauncher\benchmarks\hash_cache.json`.
+- **Multi-Format Export Suite**:
+  - Pure-Dart multi-sheet Excel workbook (`.xlsx`) generated via Syncfusion with native embedded bar and column charts (Tokens/sec and Quality scores), formatted tables, individual test runs, full raw responses, and host system hardware info.
+  - Clean flat CSV export (`.csv`) for data analysis.
+  - Structured JSON export (`.json`) for automated pipelines.
+  - Dedicated benchmark artifacts folder: `%APPDATA%\LlamaLauncher\benchmarks\MD-Bench_1.0_<timestamp>\`.
+- **Unit & Regression Tests**:
+  - Comprehensive suite in `test/benchmark_suite_test.dart` verifying constants, SHA-256 cache mechanics, deterministic evaluators (Logic, Python runner, Instruction following), and multi-sheet Excel export.
+
 ## [1.0.1] - 2026-09-29
 
 ### Changed

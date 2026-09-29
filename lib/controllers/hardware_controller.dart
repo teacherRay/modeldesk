@@ -23,6 +23,7 @@ class HardwareController extends ChangeNotifier {
   bool get isMonitoring => _isMonitoring;
   String get gpuName => _service.gpuName;
   bool get isAdlAvailable => _service.isAdlAvailable;
+  HardwareMonitorService get monitorService => _service;
 
   void setPidProvider(int? Function() provider) {
     _pidProvider = provider;
